@@ -7,4 +7,5 @@ gem 'dotenv'
 gem 'byebug'
 gem "rack"
 gem "slim"
+gem 'slack-ruby-client'
 
