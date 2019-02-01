@@ -8,6 +8,16 @@ require 'byebug'
 require_relative 'app/slack_authorizer'
 require_relative 'app/jv_sticker'
 
+
+def create_slack_client(slack_api_secret = ENV['SLACK_API_TOKEN'])
+  Slack.configure do |config|
+    config.token = slack_api_secret
+    raise 'Missing ENV[SLACK_API_TOKEN]!' unless config.token
+  end
+  Slack::Web::Client.new
+end
+
+
 use SlackAuthorizer
 
 class RisitasSlack < Sinatra::Base
