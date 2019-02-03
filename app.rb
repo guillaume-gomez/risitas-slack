@@ -15,8 +15,37 @@ def create_slack_client(slack_api_secret = ENV['SLACK_API_TOKEN'])
   Slack::Web::Client.new
 end
 
-def format_message(risitas_url)
-  risitas_url
+def format_message(channel_id, risitas_url)
+  text = "Est ce le risitas que tu voulais ?\n #{risitas_url}"
+  attachments = [
+    {
+          "fallback": "You are unable to choose a game",
+          "callback_id": "wopr_game",
+          "color": "#3AA3E3",
+          "attachment_type": "default",
+          "actions": [
+              {
+                  "name": "previous",
+                  "text": "Precedent",
+                  "type": "button",
+                  "value": "previous"
+              },
+              {
+                  "name": "choose",
+                  "text": "On prend celui la !",
+                  "type": "button",
+                  "value": "choose"
+              },
+              {
+                  "name": "next",
+                  "text": "Suivant",
+                  "type": "button",
+                  "value": "next"
+              }
+          ]
+      }
+  ]
+  { text: text, attachments: attachments, channel: channel_id, as_user: true }
 end
 
 
@@ -44,8 +73,7 @@ class RisitasSlack < Sinatra::Base
     puts "==================================="
     puts risitas_url.first
     puts "==================================="
-    #@client.chat_postMessage(channel: channel_id, text: risitas_url)
-    @client.chat_postMessage(channel: channel_id, text: risitas_url.first, as_user: true)
+    @client.chat_postMessage(format_message(channel_id, risitas_url.first))
     ""
   end
 
