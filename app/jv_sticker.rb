@@ -1,3 +1,6 @@
+require 'uri'
+require 'httparty'
+
 class JvSticker
   include HTTParty
 

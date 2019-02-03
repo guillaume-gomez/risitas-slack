@@ -1,11 +1,9 @@
 require 'dotenv/load'
 require 'sinatra'
 require 'slim'
-require 'uri'
-require 'httparty'
 require 'byebug'
+require 'slack-ruby-client'
 
-require_relative 'app/slack_authorizer'
 require_relative 'app/jv_sticker'
 
 
@@ -17,37 +15,37 @@ def create_slack_client(slack_api_secret = ENV['SLACK_API_TOKEN'])
   Slack::Web::Client.new
 end
 
+def format_message(risitas_url)
+  risitas_url
+end
 
-use SlackAuthorizer
 
 class RisitasSlack < Sinatra::Base
+
+  def initialize(app = nil)
+    super(app)
+    @client = create_slack_client();
+    @client.auth_test
+    @last_search = nil
+    @last_results  = []
+  end
 
   post '/slack/command' do
     token = params["token"]
     
     channel_id = params["channel_id"]
-    channel_name = params["channel_name"]
-    team_id = params["team_id"]
     
     user_id = params["user_id"] 
     user_name = params["user_name"]
     
     text = params["text"]
     response_url = params["response_url"]
-    result = JvSticker.find(text)
+    risitas_url = JvSticker.find(text)
     puts "==================================="
-    puts result.first
+    puts risitas_url.first
     puts "==================================="
-
-    options  = {
-      body: {
-        "response_type": "in_channel",
-        "text": result.first,
-        "username": user_name
-      }.to_json,
-      headers: { 'Content-Type' => 'application/json' }
-    }
-    HTTParty.post(response_url, options)
+    #@client.chat_postMessage(channel: channel_id, text: risitas_url)
+    @client.chat_postMessage(channel: channel_id, text: risitas_url.first, as_user: true)
     ""
   end
 
