@@ -45,7 +45,7 @@ def format_message(channel_id, risitas_url)
           ]
       }
   ]
-  { text: text, attachments: attachments, channel: channel_id, as_user: true }
+  { text: text, attachments: attachments, channel: channel_id }
 end
 
 
