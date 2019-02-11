@@ -77,5 +77,9 @@ class RisitasSlack < Sinatra::Base
     ""
   end
 
+  post '/actions' do
+
+  end
+
 
 end
