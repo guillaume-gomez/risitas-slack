@@ -19,8 +19,8 @@ def format_message(channel_id, risitas_url)
   text = "Est ce le risitas que tu voulais ?\n #{risitas_url}"
   attachments = [
     {
-          "fallback": "You are unable to choose a game",
-          "callback_id": "wopr_game",
+          "fallback": "You can select the risitas that you really want",
+          "callback_id": "wopr_risitas",
           "color": "#3AA3E3",
           "attachment_type": "default",
           "actions": [
