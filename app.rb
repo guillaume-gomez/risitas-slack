@@ -74,7 +74,7 @@ class RisitasSlack < Sinatra::Base
     action = payload["actions"].first
     action_name = action["name"]
     action_value = action["value"]
-    $teams[team_id]['client'].chat_update(text: "coucou", channel: channel_id, ts: ts )
+    $teams[team_id]['client'].chat_update(attachments: [], text: "coucou", channel: channel_id, ts: ts )
     ""
   end
 
