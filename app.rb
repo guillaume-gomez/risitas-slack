@@ -7,30 +7,35 @@ require 'slack-ruby-client'
 require_relative 'app/jv_sticker'
 
 def format_message(channel_id, risitas_url)
-  text = "Est ce le risitas que tu voulais ?\n #{risitas_url}"
-  attachments = [
-        {
-    text: 'Do you accept the terms of service?',
-    callback_id: 'accept_tos',
+  pretext = "Est ce le risitas que tu voulais ?\n #{risitas_url}"
+  attachments = [{
+    callback_id: 'select_risitas',
     actions: [
       {
-        name: 'accept_tos',
-        text: 'Yes',
-        value: 'accept',
+        name: 'select_risitas',
+        text: 'Previous',
+        value: 'previous',
         type: 'button',
         style: 'primary',
       },
       {
-        name: 'accept_tos',
-        text: 'No',
-        value: 'deny',
+        name: 'select_risitas',
+        text: 'Choose',
+        value: 'choose',
+        type: 'button',
+        style: 'danger',
+      },
+      {
+        name: 'select_risitas',
+        text: 'Next',
+        value: 'next',
         type: 'button',
         style: 'danger',
       },
     ],
   }
     ]
-  { text: text, attachments: attachments, channel: channel_id }
+  { pretext: pretext, attachments: attachments, channel: channel_id }
 end
 
 
