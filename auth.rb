@@ -1,3 +1,4 @@
+require 'dotenv/load'
 require 'sinatra/base'
 require 'slack-ruby-client'
 require 'byebug'
