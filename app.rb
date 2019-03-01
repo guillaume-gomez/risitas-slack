@@ -4,12 +4,10 @@ require 'byebug'
 require 'slack-ruby-client'
 
 require_relative 'app/jv_sticker'
-
-def format_message(channel_id, risitas_url)
-  pretext = "Est ce le risitas que tu voulais ?\n #{risitas_url}"
-  attachments = [{
-    callback_id: 'select_risitas',
-    actions: [
+# todo only show message from the user before choosed
+def format_message(channel_id, risitas_url, choosed = false ,ts = nil)
+  actions = !choosed ?
+    [
       {
         name: 'select_risitas',
         text: 'Previous',
@@ -50,8 +48,9 @@ class RisitasSlack < Sinatra::Base
 
   def initialize(app = nil)
     super(app)
-    @last_search = nil
-    @last_results  = []
+    $last_search = nil
+    $last_results  = []
+    $current_index = 0
   end
 
   post '/slack/commands' do
@@ -66,10 +65,15 @@ class RisitasSlack < Sinatra::Base
     text = params["text"]
     response_url = params["response_url"]
     risitas_url = JvSticker.find(text)
+    
+    $last_results = risitas_url
+    $last_search = text
+    $current_index = 0
+
     puts "==================================="
-    puts risitas_url.first
+    puts $last_results[$current_index]
     puts "==================================="
-    $teams[team_id]['client'].chat_postMessage(format_message(channel_id, risitas_url.first))
+    $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index]))
     ""
   end
 
