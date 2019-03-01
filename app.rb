@@ -22,7 +22,6 @@ def format_message(channel_id, risitas_url)
         text: 'Choose',
         value: 'choose',
         type: 'button',
-        style: 'danger',
       },
       {
         name: 'select_risitas',
