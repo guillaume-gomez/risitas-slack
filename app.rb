@@ -30,10 +30,19 @@ def format_message(channel_id, risitas_url)
         type: 'button',
         style: 'danger',
       },
-    ],
-  }
-    ]
-  { pretext: pretext, attachments: attachments, channel: channel_id }
+    ] :
+    []
+
+  pretext = !choosed ? "Est ce le risitas que tu voulais ?\n" : ""
+
+  attachments = [{
+    pretext: pretext,
+    image_url: risitas_url,
+    callback_id: 'select_risitas',
+    actions: actions
+  }]
+
+  { attachments: attachments, channel: channel_id, ts: ts }
 end
 
 
@@ -72,7 +81,22 @@ class RisitasSlack < Sinatra::Base
     action = payload["actions"].first
     action_name = action["name"]
     action_value = action["value"]
-    $teams[team_id]['client'].chat_update(attachments: [], text: "coucou", channel: channel_id, ts: ts )
+
+    choosed = false
+    if action_value == "previous"
+      $current_index = $current_index - 1
+    elsif action_value == "choose"
+      $current_index = $current_index
+      choosed = true
+    elsif action_value == "next"
+      $current_index = $current_index + 1
+    end
+
+    puts "==================================="
+    puts $last_results[$current_index]
+    puts "==================================="
+
+    $teams[team_id]['client'].chat_update(format_message(channel_id, $last_results[$current_index], choosed ,ts))
     ""
   end
 
