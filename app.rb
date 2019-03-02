@@ -70,37 +70,32 @@ class RisitasSlack < Sinatra::Base
     $last_search = text
     $current_index = 0
 
-    puts "==================================="
-    puts $last_results[$current_index]
-    puts "==================================="
-    $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index]))
+    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index]).merge(user: user_id))
     ""
   end
 
   post '/slack/after_button' do
     payload = JSON.parse(params["payload"])
     channel_id = payload["channel"]["id"]
+    user_id = payload["user"]["id"]
     ts = payload["message_ts"]
     team_id = payload["team"]["id"]
     action = payload["actions"].first
     action_name = action["name"]
     action_value = action["value"]
+    token = action["token"]
 
     choosed = false
-    if action_value == "previous"
-      $current_index = $current_index - 1
-    elsif action_value == "choose"
-      $current_index = $current_index
+    if action_value == "choose"
       choosed = true
+      $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], choosed ,ts).merge(user: user_id))
+      return ""
+    elsif action_value == "previous"
+      $current_index = $current_index - 1
     elsif action_value == "next"
       $current_index = $current_index + 1
     end
-
-    puts "==================================="
-    puts $last_results[$current_index]
-    puts "==================================="
-
-    $teams[team_id]['client'].chat_update(format_message(channel_id, $last_results[$current_index], choosed ,ts))
+    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], choosed ,ts).merge(user: user_id))
     ""
   end
 
