@@ -5,7 +5,7 @@ require 'slack-ruby-client'
 
 require_relative 'app/jv_sticker'
 # todo only show message from the user before choosed
-def format_message(channel_id, risitas_url, choosed = false ,ts = nil)
+def format_message(channel_id, risitas_url, user_id, choosed = false ,ts = nil)
   actions = !choosed ?
     [
       {
@@ -40,7 +40,7 @@ def format_message(channel_id, risitas_url, choosed = false ,ts = nil)
     actions: actions
   }]
 
-  { attachments: attachments, channel: channel_id, ts: ts }
+  { attachments: attachments, channel: channel_id, ts: ts, user_id: user_id }
 end
 
 
@@ -70,7 +70,7 @@ class RisitasSlack < Sinatra::Base
     $last_search = text
     $current_index = 0
 
-    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index]).merge(user: user_id))
+    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id))
     ""
   end
 
@@ -88,14 +88,14 @@ class RisitasSlack < Sinatra::Base
     choosed = false
     if action_value == "choose"
       choosed = true
-      $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], choosed ,ts).merge(user: user_id))
+      $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts))
       return ""
     elsif action_value == "previous"
       $current_index = $current_index - 1
     elsif action_value == "next"
       $current_index = $current_index + 1
     end
-    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], choosed ,ts).merge(user: user_id))
+    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts))
     ""
   end
 
