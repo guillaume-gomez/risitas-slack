@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'slim'
 require 'byebug'
+require 'httparty'
 require 'slack-ruby-client'
 
 require_relative 'app/jv_sticker'
@@ -40,7 +41,7 @@ def format_message(channel_id, risitas_url, user_id, choosed = false ,ts = nil)
     actions: actions
   }]
 
-  { attachments: attachments, channel: channel_id, ts: ts, user_id: user_id }
+  { attachments: attachments, channel: channel_id, ts: ts, user: user_id, replace_original: true, response_type: "in_channel" }
 end
 
 
@@ -69,7 +70,6 @@ class RisitasSlack < Sinatra::Base
     $last_results = risitas_url
     $last_search = text
     $current_index = 0
-
     $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id))
     ""
   end
@@ -84,10 +84,19 @@ class RisitasSlack < Sinatra::Base
     action_name = action["name"]
     action_value = action["value"]
     token = action["token"]
+    response_url = payload["response_url"]
 
     choosed = false
     if action_value == "choose"
       choosed = true
+      
+      # first delete the ephemeral message, then create the final message with the choosed link
+      options  = {
+        body: { replace_original: true, response_type: "in_channel", delete_original: true, text: "" }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      }
+      HTTParty.post(response_url, options)
+
       $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts))
       return ""
     elsif action_value == "previous"
@@ -95,7 +104,13 @@ class RisitasSlack < Sinatra::Base
     elsif action_value == "next"
       $current_index = $current_index + 1
     end
-    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts))
+
+    # update ephemeral messages
+    options  = {
+      body: format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts).to_json,
+      headers: { 'Content-Type' => 'application/json' }
+    }
+    HTTParty.post(response_url, options)
     ""
   end
 
