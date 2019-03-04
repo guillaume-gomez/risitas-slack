@@ -6,7 +6,7 @@ require 'slack-ruby-client'
 
 require_relative 'app/jv_sticker'
 # todo only show message from the user before choosed
-def format_message(channel_id, risitas_url, user_id, choosed = false ,ts = nil)
+def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts = nil)
   actions = !choosed ?
     [
       {
@@ -33,9 +33,13 @@ def format_message(channel_id, risitas_url, user_id, choosed = false ,ts = nil)
     []
 
   pretext = !choosed ? "Est ce le risitas que tu voulais ?\n" : ""
+  title = !choosed ? "" : text
+  title_link = !choosed ? "" : risitas_url
 
   attachments = [{
     pretext: pretext,
+    title: title,
+    title_link: title_link,
     image_url: risitas_url,
     callback_id: 'select_risitas',
     actions: actions
@@ -70,7 +74,7 @@ class RisitasSlack < Sinatra::Base
     $last_results = risitas_url
     $last_search = text
     $current_index = 0
-    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id))
+    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id, text))
     ""
   end
 
@@ -86,6 +90,8 @@ class RisitasSlack < Sinatra::Base
     token = action["token"]
     response_url = payload["response_url"]
 
+    text = $last_search
+
     choosed = false
     if action_value == "choose"
       choosed = true
@@ -97,7 +103,7 @@ class RisitasSlack < Sinatra::Base
       }
       HTTParty.post(response_url, options)
 
-      $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts))
+      $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts))
       return ""
     elsif action_value == "previous"
       $current_index = $current_index - 1
@@ -107,7 +113,7 @@ class RisitasSlack < Sinatra::Base
 
     # update ephemeral messages
     options  = {
-      body: format_message(channel_id, $last_results[$current_index], user_id, choosed ,ts).to_json,
+      body: format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts).to_json,
       headers: { 'Content-Type' => 'application/json' }
     }
     HTTParty.post(response_url, options)
