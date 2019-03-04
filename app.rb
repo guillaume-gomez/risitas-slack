@@ -69,9 +69,14 @@ class RisitasSlack < Sinatra::Base
     
     text = params["text"]
     response_url = params["response_url"]
-    risitas_url = JvSticker.find(text)
+    risitas_urls = JvSticker.find(text)
+
+    if risitas_urls.count == 0
+      $teams[team_id]['client'].chat_postMessage(user: user_id, channel: channel_id, text: "No results _:(_ for this research ' *#{text}* '")
+      return ""
+    end
     
-    $last_results = risitas_url
+    $last_results = risitas_urls
     $last_search = text
     $current_index = 0
     $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id, text))

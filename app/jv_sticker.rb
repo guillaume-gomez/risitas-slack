@@ -26,7 +26,7 @@ class JvSticker
       full_urls
     else
       # this just raises the net/http response that was raised
-      raise response.response
+      []
     end
   end
 end
