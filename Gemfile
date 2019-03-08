@@ -1,12 +1,21 @@
 source 'https://rubygems.org'
 ruby '2.5.1'
 
-gem 'httparty'
 gem 'sinatra'
-gem 'dotenv'
+gem 'sinatra-activerecord'
+gem 'activerecord'
 gem 'byebug'
-gem "rack"
-gem "slim"
+gem 'httparty'
+gem 'dotenv'
+gem 'rack'
+gem 'rake'
 gem 'slack-ruby-client'
-gem "pg"
-gem "sinatra-activerecord"
+
+group :development do
+ gem 'sqlite3', '~> 1.3.6'
+ gem 'tux'
+end
+
+group :production do
+ gem 'pg'
+end
