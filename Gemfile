@@ -8,4 +8,5 @@ gem 'byebug'
 gem "rack"
 gem "slim"
 gem 'slack-ruby-client'
-
+gem "pg"
+gem "sinatra-activerecord"
