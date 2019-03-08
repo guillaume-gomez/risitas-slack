@@ -1,11 +1,11 @@
 require 'sinatra'
-require 'slim'
 require 'byebug'
 require 'httparty'
+
 require 'slack-ruby-client'
 
 require_relative 'app/jv_sticker'
-# todo only show message from the user before choosed
+
 def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts = nil)
   actions = !choosed ?
     [
