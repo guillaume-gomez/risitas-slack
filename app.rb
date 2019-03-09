@@ -53,6 +53,14 @@ def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts =
   { attachments: attachments, channel: channel_id, ts: ts, user: user_id, replace_original: true, response_type: "in_channel" }
 end
 
+def delete_message(response_url)
+  options  = {
+        body: { replace_original: true, response_type: "in_channel", delete_original: true, text: "" }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      }
+      HTTParty.post(response_url, options)
+end
+
 
 class RisitasSlack < Sinatra::Base
 
@@ -107,11 +115,7 @@ class RisitasSlack < Sinatra::Base
       choosed = true
       
       # first delete the ephemeral message, then create the final message with the choosed link
-      options  = {
-        body: { replace_original: true, response_type: "in_channel", delete_original: true, text: "" }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
-      }
-      HTTParty.post(response_url, options)
+      delete_message(response_url)
 
       $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts))
       return ""
