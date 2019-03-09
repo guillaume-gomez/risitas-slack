@@ -14,7 +14,6 @@ def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts =
         text: 'Previous',
         value: 'previous',
         type: 'button',
-        style: 'primary',
       },
       {
         name: 'select_risitas',
@@ -26,6 +25,12 @@ def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts =
         name: 'select_risitas',
         text: 'Next',
         value: 'next',
+        type: 'button',
+      },
+      {
+        name: 'select_risitas',
+        text: 'Cancel',
+        value: 'cancel',
         type: 'button',
         style: 'danger',
       },
@@ -114,6 +119,9 @@ class RisitasSlack < Sinatra::Base
       $current_index = $current_index - 1
     elsif action_value == "next"
       $current_index = $current_index + 1
+    elsif action_value == "cancel"
+      delete_message(response_url)
+      return ""
     end
 
     # update ephemeral messages
