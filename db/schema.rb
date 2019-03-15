@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_10_205155) do
+ActiveRecord::Schema.define(version: 2019_03_14_214437) do
 
   create_table "slack_credentials", force: :cascade do |t|
     t.string "confirmation_token"
@@ -18,6 +18,8 @@ ActiveRecord::Schema.define(version: 2019_03_10_205155) do
     t.string "team_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "bot_user_id"
+    t.string "bot_access_token"
   end
 
 end
