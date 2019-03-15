@@ -1,5 +1,6 @@
 require 'dotenv/load'
 require 'slack-ruby-client'
+require './models/slack_credentials'
 
 # Load Slack app info into a hash called `config` from the environment variables assigned during setup
 # See the "Running the app" section of the README for instructions.
@@ -20,19 +21,19 @@ class SlackClient
     raise "Missing Slack config variables: #{error_msg}"
   end
 
-  def initialize(team_id, access_token, bot_user_id, bot_access_token)
+  def initialize()
+    credentials = SlackCredentials.last
     @client = {}
-    @client[team_id] = {
-        user_access_token: access_token,
-        bot_user_id: bot_user_id,
-        bot_access_token: bot_access_token
+    @client[credentials.team_id] = {
+        user_access_token: credentials.confirmation_token,
+        bot_user_id: credentials.bot_user_id,
+        bot_access_token: credentials.bot_access_token
       }
-    @client[team_id]['client'] = create_slack_client(access_token)
-    @client[team_id]['client']
+    @client[credentials.team_id]['client'] = create_slack_client(credentials.confirmation_token)
   end
 
-  def slack_client
-    @client
+  def client(team_id)
+    @client[team_id]['client']
   end
 
   private

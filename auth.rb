@@ -6,17 +6,12 @@ require 'sinatra/activerecord'
 
 require 'slack-ruby-client'
 
-require './models/slack_credentials'
 require './slack_client'
 require './environments'
 
 # Set the OAuth scope of your bot. We're just using `bot` for this demo, as it has access to
 # all the things we'll need to access. See: https://api.slack.com/docs/oauth-scopes for more info.
 BOT_SCOPE = 'bot'
-
-# This hash will contain all the info for each authed team, as well as each team's Slack client object.
-# In a production environment, you may want to move some of this into a real data store.
-$teams = {}
 
 # Slack uses OAuth for user authentication. This auth process is performed by exchanging a set of
 # keys and tokens between Slack's servers and yours. This process allows the authorizing user to confirm
@@ -49,7 +44,6 @@ class Auth < Sinatra::Base
     client = Slack::Web::Client.new
     # OAuth Step 3: Success or failure
     begin
-      puts SLACK_CONFIG
       response = client.oauth_access(
         {
           client_id: SLACK_CONFIG[:slack_client_id],
@@ -58,14 +52,19 @@ class Auth < Sinatra::Base
           code: params[:code] # (This is the OAuth code mentioned above)
         }
       )
-      credentials = SlackCredentials.where(confirmation_token: params[:code]).first_or_create
-      credentials.update_attributes(confirmation_token: params[:code], confirmation_token_date: DateTime.now)
+      credentials = SlackCredentials.where("created_at < ?", 6.months.ago).first_or_create
+      credentials.update_attributes({
+        confirmation_token: response['access_token'],
+        bot_user_id: response['bot']['bot_user_id'],
+        bot_access_token: response['bot']['bot_access_token'],
+        team_id: response['team_id'],
+        confirmation_token_date: DateTime.now
+      })
       # Success:
       # Yay! Auth succeeded! Let's store the tokens and create a Slack client to use in our Events handlers.
       # The tokens we receive are used for accessing the Web API, but this process also creates the Team's bot user and
       # authorizes the app to access the Team's Events.
       puts response
-      $teams = SlackClient.new(response['team_id'], response['access_token'], response['bot']['bot_user_id'], response['bot']['bot_access_token'])
       # Be sure to let the user know that auth succeeded.
       status 200
       body "Yay! Auth succeeded! You're awesome!"
