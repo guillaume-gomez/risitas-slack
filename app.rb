@@ -69,9 +69,12 @@ class RisitasSlack < Sinatra::Base
     $last_search = nil
     $last_results  = []
     $current_index = 0
+    $teams = {}
   end
 
   post '/slack/commands' do
+    $teams = SlackClient.new
+
     team_id = params["team_id"]
     token = params["token"]
     
@@ -85,14 +88,14 @@ class RisitasSlack < Sinatra::Base
     risitas_urls = JvSticker.find(text)
 
     if risitas_urls.count == 0
-      $teams[team_id]['client'].chat_postMessage(user: user_id, channel: channel_id, text: "No results _:(_ for this research ' *#{text}* '")
+      $teams.client(team_id).chat_postMessage(user: user_id, channel: channel_id, text: "No results _:(_ for this research ' *#{text}* '")
       return ""
     end
     
     $last_results = risitas_urls
     $last_search = text
     $current_index = 0
-    $teams[team_id]['client'].chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id, text))
+    $teams.client(team_id).chat_postEphemeral(format_message(channel_id, $last_results[$current_index], user_id, text))
     ""
   end
 
@@ -117,7 +120,7 @@ class RisitasSlack < Sinatra::Base
       # first delete the ephemeral message, then create the final message with the choosed link
       delete_message(response_url)
 
-      $teams[team_id]['client'].chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts))
+      $teams.client(team_id).chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts))
       return ""
     elsif action_value == "previous"
       $current_index = $current_index - 1
