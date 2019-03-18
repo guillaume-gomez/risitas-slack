@@ -40,6 +40,7 @@ def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts =
   pretext = !choosed ? "Est ce le risitas que tu voulais ?\n" : ""
   title = !choosed ? "" : text
   title_link = !choosed ? "" : risitas_url
+  as_user = choosed
 
   attachments = [{
     pretext: pretext,
@@ -50,15 +51,15 @@ def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts =
     actions: actions
   }]
 
-  { attachments: attachments, channel: channel_id, ts: ts, user: user_id, replace_original: true, response_type: "in_channel" }
+  { attachments: attachments, channel: channel_id, ts: ts, user: user_id, replace_original: true, response_type: "in_channel", as_user: as_user }
 end
 
 def delete_message(response_url)
   options  = {
-        body: { replace_original: true, response_type: "in_channel", delete_original: true, text: "" }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
-      }
-      HTTParty.post(response_url, options)
+    body: { replace_original: true, response_type: "in_channel", delete_original: true, text: "" }.to_json,
+    headers: { 'Content-Type' => 'application/json' }
+  }
+  HTTParty.post(response_url, options)
 end
 
 
