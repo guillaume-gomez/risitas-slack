@@ -6,7 +6,7 @@ require 'slack-ruby-client'
 
 require_relative 'app/jv_sticker'
 
-def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts = nil)
+def format_message(channel_id, risitas_url, user_id, text, choosed = false ,ts = nil, token = nil)
   actions = !choosed ?
     [
       {
@@ -121,7 +121,7 @@ class RisitasSlack < Sinatra::Base
       # first delete the ephemeral message, then create the final message with the choosed link
       delete_message(response_url)
 
-      $teams.client(team_id).chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts))
+      $teams.client(team_id).chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts).merge({token: token}))
       return ""
     elsif action_value == "previous"
       $current_index = $current_index - 1
