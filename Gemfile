@@ -10,6 +10,8 @@ gem 'dotenv'
 gem 'rack'
 gem 'rake'
 gem 'slack-ruby-client'
+gem 'rufus-scheduler'
+
 
 group :development do
  gem 'sqlite3', '~> 1.3.6'

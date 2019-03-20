@@ -17,10 +17,15 @@ GEM
     byebug (10.0.2)
     concurrent-ruby (1.1.4)
     dotenv (2.6.0)
+    et-orbi (1.1.7)
+      tzinfo
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
+    fugit (1.1.8)
+      et-orbi (~> 1.1, >= 1.1.7)
+      raabro (~> 1.1)
     gli (2.18.0)
     hashie (3.6.0)
     httparty (0.16.3)
@@ -36,6 +41,7 @@ GEM
     multipart-post (2.0.0)
     mustermann (1.0.3)
     pg (1.1.4)
+    raabro (1.1.6)
     rack (2.0.6)
     rack-protection (2.0.5)
       rack
@@ -50,6 +56,8 @@ GEM
       rack (>= 1.0)
       rack-test (~> 0.6.2)
       ripl (>= 0.7.0)
+    rufus-scheduler (3.5.2)
+      fugit (~> 1.1, >= 1.1.5)
     sinatra (2.0.5)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -90,6 +98,7 @@ DEPENDENCIES
   pg
   rack
   rake
+  rufus-scheduler
   sinatra
   sinatra-activerecord
   slack-ruby-client
