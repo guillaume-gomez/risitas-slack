@@ -83,7 +83,6 @@ class RisitasSlack < Sinatra::Base
     
     user_id = params["user_id"] 
     user_name = params["user_name"]
-    
     text = params["text"]
     response_url = params["response_url"]
     risitas_urls = JvSticker.find(text)
@@ -121,7 +120,7 @@ class RisitasSlack < Sinatra::Base
       # first delete the ephemeral message, then create the final message with the choosed link
       delete_message(response_url)
 
-      $teams.client(team_id).chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts).merge({token: token}))
+      $teams.client(team_id).chat_postMessage(format_message(channel_id, $last_results[$current_index], user_id, text, choosed ,ts))
       return ""
     elsif action_value == "previous"
       $current_index = $current_index - 1
