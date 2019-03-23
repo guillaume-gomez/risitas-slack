@@ -23,6 +23,7 @@ class SlackClient
 
   def initialize()
     credentials = SlackCredentials.last
+    raise "Missing Slack credentials" if credentials.nil?
     @client = {}
     @client[credentials.team_id] = {
         user_access_token: credentials.confirmation_token,
@@ -34,6 +35,10 @@ class SlackClient
 
   def client(team_id)
     @client[team_id]['client']
+  end
+
+  def default_client()
+    @client.first['client']
   end
 
   private
