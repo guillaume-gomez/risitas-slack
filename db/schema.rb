@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2019_03_19_204819) do
     t.string "bot_access_token"
   end
 
-  create_table "slack_user", force: :cascade do |t|
+  create_table "slack_users", force: :cascade do |t|
     t.string "slack_id"
     t.string "team_id"
     t.string "real_name"
