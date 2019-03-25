@@ -28,17 +28,14 @@ class SlackClient
     @client[credentials.team_id] = {
         user_access_token: credentials.confirmation_token,
         bot_user_id: credentials.bot_user_id,
-        bot_access_token: credentials.bot_access_token
+        bot_access_token: credentials.bot_access_token,
+        team_id: credentials.team_id
       }
-    @client[credentials.team_id]['client'] = create_slack_client(credentials.confirmation_token)
+    @client['client'] = create_slack_client(credentials.confirmation_token)
   end
 
-  def client(team_id)
-    @client[team_id]['client']
-  end
-
-  def default_client()
-    @client.first['client']
+  def client()
+    @client['client']
   end
 
   private
