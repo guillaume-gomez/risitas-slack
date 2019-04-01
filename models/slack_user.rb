@@ -12,7 +12,6 @@ class SlackUser < ActiveRecord::Base
       all_members.concat(response.members)
     end
     all_members.each do |member|
-      debugger
       slack_user =  SlackUser.find_or_create_by(slack_id: member["id"])
       slack_user.update_attributes(
         slack_id: member["id"], 
