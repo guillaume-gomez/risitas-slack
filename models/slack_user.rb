@@ -27,5 +27,4 @@ class SlackUser < ActiveRecord::Base
       )
     end
   end
-
 end
