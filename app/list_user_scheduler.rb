@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'rufus/scheduler'
-require './models/slack_user'
+require '../models/slack_user'
 
 class ListUserScheduler < Sinatra::Base
   scheduler = Rufus::Scheduler.new
