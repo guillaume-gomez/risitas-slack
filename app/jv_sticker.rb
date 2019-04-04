@@ -14,7 +14,7 @@ class JvSticker
   end
 
   def self.find(search)
-    response = get("/search?query=#{search}")
+    response = get("/search?query=#{URI::encode(search)}")
     if response.success?
       urls = response.body.scan(/data-url-end=(\S*)/).flatten
       full_urls = []
@@ -26,7 +26,7 @@ class JvSticker
       full_urls
     else
       # this just raises the net/http response that was raised
-      raise response.response
+      []
     end
   end
 end
