@@ -16,7 +16,6 @@ class JvSticker
   def self.find(search)
     response = get("/search?query=#{URI::encode(search)}")
     if response.success?
-      debugger
       urls = response.body.scan(/data-id=(\S*)/).flatten
       full_urls = []
       urls.each do |url|
