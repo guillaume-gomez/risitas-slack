@@ -1,6 +1,6 @@
 require 'dotenv/load'
 require 'slack-ruby-client'
-require '../models/slack_credentials'
+require_relative '../models/slack_credentials'
 
 # Load Slack app info into a hash called `config` from the environment variables assigned during setup
 # See the "Running the app" section of the README for instructions.

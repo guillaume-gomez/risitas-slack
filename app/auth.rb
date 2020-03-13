@@ -6,8 +6,8 @@ require 'sinatra/activerecord'
 
 require 'slack-ruby-client'
 
-require './slack_client'
-require './environments'
+require_relative './slack_client'
+require_relative './environments'
 
 # Set the OAuth scope of your bot. We're just using `bot` for this demo, as it has access to
 # all the things we'll need to access. See: https://api.slack.com/docs/oauth-scopes for more info.

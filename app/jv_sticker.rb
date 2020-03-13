@@ -16,11 +16,11 @@ class JvSticker
   def self.find(search)
     response = get("/search?query=#{URI::encode(search)}")
     if response.success?
-      urls = response.body.scan(/data-url-end=(\S*)/).flatten
+      urls = response.body.scan(/data-id=(\S*)/).flatten
       full_urls = []
       urls.each do |url|
         url_end = JSON.parse(url)
-        full_urls << "https://image.noelshack.com/fichiers/" + url_end
+        full_urls << "https://i.jvsticker.com/" + url_end
       end
       self.new(search, full_urls)
       full_urls
