@@ -7,4 +7,4 @@ The result for each research come from [jvsticker](https://jvsticker.com)
 ## Example 
 ![Example](/preview.png)
 
-[gif](/preview.m4v)
+You can see *risitas-slack* in action [here](/preview.m4v)
